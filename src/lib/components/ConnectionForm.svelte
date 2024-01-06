@@ -16,7 +16,7 @@
 	let testStatusIcon = Wifi
 	let testStatusColor = "text-blue-500"
 
-	$: switch ($dbCredsStore.status) {
+	$: switch ($dbCredsStore.checkStatus) {
 		case "pending":
 			testStatusIcon = ArrowPath
 			testStatusColor = "text-slate-400"
@@ -32,16 +32,16 @@
 		case null:
 			testStatusColor = "text-blue-500"
 			testStatusIcon = Wifi
-			$dbCredsStore.error = ""
+			$dbCredsStore.checkError = ""
 			break
 	}
 
 	$: formData = { host, port, user, password, database }
 
 	async function testConnection() {
-		if ($dbCredsStore.status === "pending") return
+		if ($dbCredsStore.checkStatus === "pending") return
 
-		$dbCredsStore.status = "pending"
+		$dbCredsStore.checkStatus = "pending"
 		const res = await fetch("/api/check-db-connection", {
 			method: "POST",
 			body: JSON.stringify(formData),
@@ -49,12 +49,12 @@
 		const json = await res.json()
 
 		if (res.status === 500) {
-			$dbCredsStore.error = json.message
-			$dbCredsStore.status = "fail"
+			$dbCredsStore.checkError = json.message
+			$dbCredsStore.checkStatus = "fail"
 			return
 		}
 
-		$dbCredsStore.status = "success"
+		$dbCredsStore.checkStatus = "success"
 	}
 
 	function submitConnection() {
@@ -123,14 +123,15 @@
 		<button
 			type="button"
 			class="flex flex-row justify-center items-center gap-1"
-			class:cursor-not-allowed={$dbCredsStore.status === "pending"}
-			disabled={$dbCredsStore.status === "pending"}
+			class:cursor-not-allowed={$dbCredsStore.checkStatus === "pending"}
+			disabled={$dbCredsStore.checkStatus === "pending"}
 			on:click={testConnection}
 		>
 			<span class="{testStatusColor} font-semibold">Test</span>
 			<Icon
 				src={testStatusIcon}
-				class="w-6 h-6 {testStatusColor} {$dbCredsStore.status === 'pending' && 'animate-spin'}"
+				class="w-6 h-6 {testStatusColor} {$dbCredsStore.checkStatus === 'pending' &&
+					'animate-spin'}"
 			/>
 		</button>
 	</div>

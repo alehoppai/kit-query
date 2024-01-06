@@ -1,12 +1,30 @@
 <script lang="ts">
 	import { Icon, PlusCircle, MinusCircle, EllipsisVertical } from "svelte-hero-icons"
 	import { createEventDispatcher } from "svelte"
-	import { dbCredsStore } from "$lib/store/dbCreds"
+	import { dbCredsStore, deleteConnection } from "$lib/store/dbCreds"
 
 	export let formVisible = false
 
 	const dispatch = createEventDispatcher()
 	let optionsVisibleFor: null | number = null
+
+	async function onDeleteConnection() {
+		if (!optionsVisibleFor) return
+
+		const res = await fetch("/api/connect", {
+			method: "DELETE",
+		})
+		const json = await res.json()
+
+		if (res.status === 500) {
+			$dbCredsStore.checkError = json.message
+			$dbCredsStore.checkStatus = "fail"
+			return
+		}
+
+		deleteConnection(optionsVisibleFor)
+		optionsVisibleFor = null
+	}
 </script>
 
 <div class="bg-slate-100 p-2 w-full border-r border-slate-500">
@@ -46,12 +64,7 @@
 							<span class="text-blue-500">Connect</span>
 						</button>
 						<hr />
-						<button
-							class="px-4 py-2"
-							on:click={() => {
-								optionsVisibleFor = null
-							}}
-						>
+						<button class="px-4 py-2" on:click={onDeleteConnection}>
 							<span class="text-red-500">Delete</span>
 						</button>
 					</div>

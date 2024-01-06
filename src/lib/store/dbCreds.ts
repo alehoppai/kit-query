@@ -5,15 +5,15 @@ import * as ls from "$lib/localStorage"
 type DBCredsStore = {
 	creds: DBCreds[]
 	connected: DBCreds | null
-	error: string
-	status: null | "pending" | "success" | "fail"
+	checkError: string
+	checkStatus: null | "pending" | "success" | "fail"
 }
 
 export const dbCredsStore = writable<DBCredsStore>({
 	creds: ls.read<DBCreds[]>("dbCreds", []),
 	connected: null,
-	error: "",
-	status: null,
+	checkError: "",
+	checkStatus: null,
 })
 
 // TODO: hash password. NOT REQUIRED ON THIS STAGE
@@ -40,6 +40,44 @@ export function saveConnection(creds: DBCreds) {
 
 		return {
 			...state,
+			creds: newCreds,
+		}
+	})
+}
+
+export function setupConnection(index: number) {
+	dbCredsStore.update((state) => {
+		return {
+			...state,
+			connected: state.creds[index],
+		}
+	})
+}
+
+export function deleteConnection(index: number) {
+	dbCredsStore.update((state) => {
+		let connectedAboutToDelete = false
+
+		if (state.connected) {
+			const selected = state.creds[index]
+			if (
+				state.connected.database === selected.database &&
+				state.connected.host === selected.host &&
+				state.connected.password === selected.password &&
+				state.connected.port === selected.port &&
+				state.connected.user === selected.user
+			) {
+				connectedAboutToDelete = true
+			}
+		}
+
+		const newCreds = state.creds.filter((_, i) => i !== index)
+
+		ls.write<DBCreds[]>("dbCreds", newCreds)
+
+		return {
+			...state,
+			connected: connectedAboutToDelete ? null : state.connected,
 			creds: newCreds,
 		}
 	})
