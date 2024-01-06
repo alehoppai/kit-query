@@ -47,7 +47,6 @@
 			body: JSON.stringify(formData),
 		})
 		const json = await res.json()
-		console.log(res.status, json)
 
 		if (res.status === 500) {
 			$dbCredsStore.error = json.message
