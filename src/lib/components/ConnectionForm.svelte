@@ -80,6 +80,7 @@
 		value={host}
 		on:input={(e) => (host = e.currentTarget.value)}
 		placeholder="Host"
+		required
 	/>
 	<input
 		class="bg-transparent text-slate-900 px-4 py-2 border-b border-slate-400 outline-none focus:border-slate-600"
@@ -87,6 +88,7 @@
 		value={port}
 		on:input={(e) => (port = e.currentTarget.value)}
 		placeholder="Port"
+		required
 	/>
 	<input
 		class="bg-transparent text-slate-900 px-4 py-2 border-b border-slate-400 outline-none focus:border-slate-600"
@@ -94,6 +96,7 @@
 		value={user}
 		on:input={(e) => (user = e.currentTarget.value)}
 		placeholder="User"
+		required
 	/>
 	<input
 		class="bg-transparent text-slate-900 px-4 py-2 border-b border-slate-400 outline-none focus:border-slate-600"
@@ -108,6 +111,7 @@
 		value={database}
 		on:input={(e) => (database = e.currentTarget.value)}
 		placeholder="Database"
+		required
 	/>
 
 	<div class="flex-1"></div>
