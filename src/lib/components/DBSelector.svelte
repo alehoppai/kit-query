@@ -13,18 +13,14 @@
 		message={$dbCredsStore.checkError}
 		on:onDissmiss={() => {
 			$dbCredsStore.checkStatus = null
-		}}
-	/>
-	<ConnectionError
-		message={$dbCredsStore.deleteError}
-		on:onDissmiss={() => {
-			$dbCredsStore.deleteStatus = null
+			$dbCredsStore.checkError = ""
 		}}
 	/>
 	<ConnectionError
 		message={$dbCredsStore.setupError}
 		on:onDissmiss={() => {
 			$dbCredsStore.setupStatus = null
+			$dbCredsStore.setupError = ""
 		}}
 	/>
 </div>

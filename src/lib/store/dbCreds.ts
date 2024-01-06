@@ -9,22 +9,16 @@ type DBCredsStore = {
 	checkError: string
 	checkStatus: null | "pending" | "success" | "fail"
 
-	deleteError: string
-	deleteStatus: null | "pending" | "success" | "fail"
-
 	setupError: string
 	setupStatus: null | "pending" | "success" | "fail"
 }
 
 export const dbCredsStore = writable<DBCredsStore>({
 	creds: ls.read<DBCreds[]>("dbCreds", []),
-	connected: null,
+	connected: ls.read<DBCreds | null>("dbConnected", null),
 
 	checkError: "",
 	checkStatus: null,
-
-	deleteError: "",
-	deleteStatus: null,
 
 	setupError: "",
 	setupStatus: null,
@@ -61,6 +55,8 @@ export function saveConnection(creds: DBCreds) {
 
 export function setupConnection(index: number) {
 	dbCredsStore.update((state) => {
+		ls.write<DBCreds>("dbConnected", state.creds[index])
+
 		return {
 			...state,
 			connected: state.creds[index],

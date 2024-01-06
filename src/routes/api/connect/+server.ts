@@ -8,11 +8,10 @@ export async function POST({ request }) {
 		const db = await dbConnect({ ...body, port: Number(body.port) })
 
 		if (!db) {
-			return error(500, "Connection is null")
+			return error(500, { message: "Connection is null" })
 		}
 
 		await db.ping()
-		await db.end()
 		return json({})
 	} catch (e) {
 		return error(500, (e as Error).message)

@@ -1,18 +1,16 @@
 import { json, error } from "@sveltejs/kit"
 import { dbConnect } from "$lib/dbConnect.js"
 
-export async function POST({ request }) {
-	const body = await request.json()
-
+// TODO: Execute queries sent trhough POST body
+export async function POST() {
 	try {
-		const db = await dbConnect({ ...body, port: Number(body.port) })
+		const db = await dbConnect()
 
 		if (!db) {
-			return error(500, "Connection is null")
+			return error(500, { message: "Connection is null" })
 		}
 
 		await db.ping()
-		await db.end()
 		return json({})
 	} catch (e) {
 		return error(500, (e as Error).message)
