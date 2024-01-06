@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Icon, CircleStack, PlusCircle, MinusCircle, Wifi, ArrowPath, ExclamationCircle, CheckCircle } from "svelte-hero-icons"
-  import { dbCredsStore } from "$lib/store/dbCreds"
-  import type { DBCreds } from "$lib/types/db"
+  import { dbCredsStore, saveConnection } from "$lib/store/dbCreds"
 
   let formVisible = false
 
@@ -57,6 +56,16 @@
 
     testStatus = "success"
   }
+
+  function submitConnection() {
+    saveConnection({ ...formData, port: Number(formData.port) })
+    host = "localhost"
+    port = "3306"
+    user = ""
+    password = ""
+    database = ""
+    formVisible = false
+  }
 </script>
 
 {#if testStatusErrorMessage.length}
@@ -98,6 +107,7 @@
     <form
       class="bg-slate-100 p-2 w-full absolute left-0 min-h-full translate-x-full transition-transform flex flex-col items-center gap-2 pb-4"
       class:translate-x-0={formVisible}
+      on:submit|preventDefault={submitConnection}
     >
       <input
         class="bg-transparent text-slate-900 px-4 py-2 border-b border-slate-400 outline-none focus:border-slate-600"
