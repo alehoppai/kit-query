@@ -1,16 +1,73 @@
 <script lang="ts">
-  import { Icon, CircleStack, PlusCircle, MinusCircle } from "svelte-hero-icons"
+  import { Icon, CircleStack, PlusCircle, MinusCircle, Wifi, ArrowPath, ExclamationCircle, CheckCircle } from "svelte-hero-icons"
   import { dbCredsStore } from "$lib/store/dbCreds"
-  import type { DBCreds } from "$lib/types/db";
+  import type { DBCreds } from "$lib/types/db"
 
-  let formVisible = false;
+  let formVisible = false
 
   let host = "localhost"
   let port = "3306"
-  let name = ""
+  let user = ""
   let password = ""
   let database = ""
+
+  let testStatus: null | "pending" | "success" | "fail" = null
+  let testStatusIcon = Wifi
+  let testStatusColor = "text-blue-500"
+  let testStatusErrorMessage = ""
+
+  $: switch (testStatus) {
+    case "pending":
+      testStatusIcon = ArrowPath
+      testStatusColor = "text-slate-400"
+      break;
+    case "fail":
+      testStatusIcon = ExclamationCircle 
+      testStatusColor = "text-red-500"
+      break;
+    case "success":
+      testStatusIcon = CheckCircle 
+      testStatusColor = "text-green-500"
+      break;
+    case null:
+      testStatusColor = "text-blue-500"
+      testStatusIcon = Wifi
+      testStatusErrorMessage = ""
+      break;
+  }
+
+  $: formData = { host, port, user, password, database }
+
+  async function testConnection() {
+    if (testStatus === "pending") return
+
+    testStatus = "pending"
+    const res =  await fetch("/api/check-db-connection", {
+      method: "POST",
+      body: JSON.stringify(formData)
+    })
+    const json = await res.json()
+    console.log(res.status, json)
+
+    if (res.status === 500) {
+      testStatusErrorMessage = json.message
+      testStatus = "fail"
+      return
+    }
+
+    testStatus = "success"
+  }
 </script>
+
+{#if testStatusErrorMessage.length}
+<div class="absolute p-4 top-4 left-1/2 -translate-x-1/2 bg-red-500 rounded-2xl shadow-2xl flex flex-row items-center gap-4">
+  <Icon src={ExclamationCircle} class="w-8 h-8 text-slate-100" />
+  <span class="text-slate-100 font-semibold">{testStatusErrorMessage}</span>
+  <button on:click={() => { testStatus = null }}>
+    <span class="text-slate-100 font-bold">Close</span>
+  </button>
+</div>
+{/if}
 
 <div class="flex flex-col rounded-2xl shadow-lg h-full">
   <div class="flex flex-row justify-between items-center bg-blue-600 p-2 rounded-t-2xl">
@@ -39,7 +96,7 @@
       {/if}
     </div>
     <form
-      class="bg-slate-100 p-2 w-full absolute left-0 min-h-full translate-x-full transition-transform flex flex-col items-center gap-2"
+      class="bg-slate-100 p-2 w-full absolute left-0 min-h-full translate-x-full transition-transform flex flex-col items-center gap-2 pb-4"
       class:translate-x-0={formVisible}
     >
       <input
@@ -59,9 +116,9 @@
       <input
         class="bg-transparent text-slate-900 px-4 py-2 border-b border-slate-400 outline-none focus:border-slate-600"
         type="text"
-        value={name}
-        on:input={e => name = e.currentTarget.value}
-        placeholder="Name"
+        value={user}
+        on:input={e => user = e.currentTarget.value}
+        placeholder="User"
       />
       <input
         class="bg-transparent text-slate-900 px-4 py-2 border-b border-slate-400 outline-none focus:border-slate-600"
@@ -78,9 +135,27 @@
         placeholder="Database"
       />
 
-      <button type="submit">
-        <span class="text-blue-500 font-semibold">Save</span>
-      </button>
+      <div class="flex-1"></div>
+
+      <div class="flex flex-row items-center justify-between gap-12">
+        <button type="submit">
+          <span class="text-blue-500 font-semibold">Save</span>
+        </button>
+
+        <button
+          type="button"
+          class="flex flex-row justify-center items-center gap-1"
+          class:cursor-not-allowed={testStatus === "pending"}
+          disabled={testStatus === "pending"}
+          on:click={testConnection}
+        >
+          <span class="{testStatusColor} font-semibold">Test</span>
+          <Icon
+            src={testStatusIcon}
+            class="w-6 h-6 {testStatusColor} {testStatus === "pending" && "animate-spin"}"
+          />
+        </button>
+      </div>
     </form>
   </div>
 </div>

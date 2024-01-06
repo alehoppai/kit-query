@@ -1,6 +1,6 @@
-import mysql from "mysql2"
+import mysql from "mysql2/promise"
 import type { DBCreds } from "./types/db"
 
-export function dbConnect(args: DBCreds) {
-	return mysql.createConnection(args)
+export async function dbConnect(args: DBCreds) {
+	return await mysql.createConnection(args)
 }
