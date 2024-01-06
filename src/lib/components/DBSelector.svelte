@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Icon, CircleStack, PlusCircle, MinusCircle } from "svelte-hero-icons"
+	import { dbCredsStore } from "$lib/store/dbCreds"
 	import ConnectionForm from "./ConnectionForm.svelte"
 	import ConnectionError from "./ConnectionError.svelte"
 	import ConnectionsList from "./ConnectionsList.svelte"
@@ -7,7 +8,12 @@
 	let formVisible = false
 </script>
 
-<ConnectionError />
+<ConnectionError
+	message={$dbCredsStore.checkError}
+	on:onDissmiss={() => {
+		$dbCredsStore.checkStatus = null
+	}}
+/>
 
 <div class="flex flex-col rounded-2xl shadow-lg h-full">
 	<div class="flex flex-row justify-between items-center bg-blue-600 p-2 rounded-t-2xl">
