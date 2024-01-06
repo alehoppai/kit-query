@@ -5,15 +5,29 @@ import * as ls from "$lib/localStorage"
 type DBCredsStore = {
 	creds: DBCreds[]
 	connected: DBCreds | null
+
 	checkError: string
 	checkStatus: null | "pending" | "success" | "fail"
+
+	deleteError: string
+	deleteStatus: null | "pending" | "success" | "fail"
+
+	setupError: string
+	setupStatus: null | "pending" | "success" | "fail"
 }
 
 export const dbCredsStore = writable<DBCredsStore>({
 	creds: ls.read<DBCreds[]>("dbCreds", []),
 	connected: null,
+
 	checkError: "",
 	checkStatus: null,
+
+	deleteError: "",
+	deleteStatus: null,
+
+	setupError: "",
+	setupStatus: null,
 })
 
 // TODO: hash password. NOT REQUIRED ON THIS STAGE

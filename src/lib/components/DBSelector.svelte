@@ -8,12 +8,26 @@
 	let formVisible = false
 </script>
 
-<ConnectionError
-	message={$dbCredsStore.checkError}
-	on:onDissmiss={() => {
-		$dbCredsStore.checkStatus = null
-	}}
-/>
+<div class="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col">
+	<ConnectionError
+		message={$dbCredsStore.checkError}
+		on:onDissmiss={() => {
+			$dbCredsStore.checkStatus = null
+		}}
+	/>
+	<ConnectionError
+		message={$dbCredsStore.deleteError}
+		on:onDissmiss={() => {
+			$dbCredsStore.deleteStatus = null
+		}}
+	/>
+	<ConnectionError
+		message={$dbCredsStore.setupError}
+		on:onDissmiss={() => {
+			$dbCredsStore.setupStatus = null
+		}}
+	/>
+</div>
 
 <div class="flex flex-col rounded-2xl shadow-lg h-full">
 	<div class="flex flex-row justify-between items-center bg-blue-600 p-2 rounded-t-2xl">
