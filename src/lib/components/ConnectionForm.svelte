@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { Icon, Wifi, ArrowPath, ExclamationCircle, CheckCircle } from "svelte-hero-icons"
 	import { dbCredsStore, saveConnection } from "$lib/store/dbCreds"
-	import { createEventDispatcher } from "svelte"
-
-	const dispatch = createEventDispatcher()
-
-	export let formVisible = false
 
 	let host = "localhost"
 	let port = "3306"
@@ -64,13 +59,13 @@
 		user = ""
 		password = ""
 		database = ""
-		dispatch("hideForm")
+		$dbCredsStore.formVisible = false
 	}
 </script>
 
 <form
-	class="bg-slate-100 p-2 w-full absolute left-0 min-h-full translate-x-full transition-transform flex flex-col items-center gap-2 pb-4"
-	class:translate-x-0={formVisible}
+	class="bg-slate-100 p-2 w-full absolute left-0 min-h-full translate-x-full transition-transform flex flex-col items-center gap-2 pb-4 z-10"
+	class:!translate-x-0={$dbCredsStore.formVisible}
 	on:submit|preventDefault={submitConnection}
 >
 	<input

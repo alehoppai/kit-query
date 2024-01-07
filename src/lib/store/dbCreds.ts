@@ -11,6 +11,8 @@ type DBCredsStore = {
 
 	setupError: string
 	setupStatus: null | "pending" | "success" | "fail"
+
+	formVisible: boolean
 }
 
 export const dbCredsStore = writable<DBCredsStore>({
@@ -22,6 +24,8 @@ export const dbCredsStore = writable<DBCredsStore>({
 
 	setupError: "",
 	setupStatus: null,
+
+	formVisible: false,
 })
 
 // TODO: hash password. NOT REQUIRED ON THIS STAGE
