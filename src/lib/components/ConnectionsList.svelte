@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, PlusCircle, EllipsisVertical } from "svelte-hero-icons"
+	import { Icon, PlusCircle, EllipsisVertical, Bolt } from "svelte-hero-icons"
 	import { dbCredsStore, setupConnection, deleteConnection } from "$lib/store/dbCreds"
 
 	let optionsVisibleFor: null | number = null
@@ -65,9 +65,13 @@
 	{:else}
 		{#each $dbCredsStore.creds as connection, i}
 			<div
-				class="flex flex-row items-center justify-between relative rounded-xl px-4 py-2"
+				class="flex flex-row items-center justify-between relative rounded-xl px-4 py-2 gap-2"
 				class:bg-blue-500={isSelectedAlsoConnectedOne(i)}
 			>
+				<Icon
+					src={Bolt}
+					class="w-4 h-4 {isSelectedAlsoConnectedOne(i) ? 'text-slate-100' : 'text-slate-700'}"
+				/>
 				<span class:text-slate-100={isSelectedAlsoConnectedOne(i)}>
 					{connection.database} | {connection.host}:{connection.port}
 				</span>
