@@ -12,6 +12,7 @@ export async function POST({ request }) {
 		}
 
 		await db.ping()
+		await db.connect()
 		return json({})
 	} catch (e) {
 		return error(500, (e as Error).message)
